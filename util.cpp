@@ -15,16 +15,42 @@ std::string convToLower(std::string src)
     to a set of words based on the criteria given in the assignment **/
 std::set<std::string> parseStringToWords(string rawWords)
 {
+    std::set<std::string> words; // this will hold the keywords
+    std::stringstream s(rawWords); // we will use a string stream to parse through our rawWords string
+    rawWords = ""; // since our stringstream is storing the rawwords we can repurpose this variable to check if our input is valid
+    while(s >> rawWords){  // this will keep going until stringstream gives an error
+        if(isISBN(rawWords)){ // uses helper function to check if current word is an ISBN
+            words.insert(rawWords); // if it is then we insert
+        }
+        else{
+            std::string temp = ""; // stores string as far as we've iterated so far
+            for(size_t i = 0; i < rawWords.length(); i++){
+                if(ispunct(rawWords[i])){ // if the current character is puncation
+                    if(temp.length() >= 2){ // we check to see if the string up to the puncation is 2 or greater
+                        words.insert(convToLower(temp)); // if it is we insert
+                    }
+                    temp = ""; // reset temp to nothing after we found puncation
+                }
+                else{
+                temp += rawWords[i]; // if punctuation isnt found we concat the character to temp
+                }
+            }
+            if(temp.length() >=2){ // final check to see if rest of word is big enough to add
+                words.insert(convToLower(temp));
+            }
+        }
+    }
+    return words;
+}
 
-
-
-
-
-
-
-
-
-
+// helper function 1
+bool isISBN(std::string word){
+    for(char ch : word){
+        if(ch > 57){
+            return false;
+        }
+    }
+    return true;
 }
 
 /**************************************************
